@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  background: #fafafa;
+}
+
+#calculator {
+  background: #fff;
+  font-size: 2rem;
+  width: 24rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 2px 4px #eaeaea, -2px -2px 4px #eaeaea;
+}
+
+#screen {
+  width: 100%;
+  height: 12rem;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 1px solid #eaeaea;
+  transition: all 0.2s ease-in-out;
+}
+
+#screen.off {
+  background: black;
+  color: white;
+  border: none;
+}
+
+#screen.on::after {
+  content: "|";
+  animation: blink 1s linear infinite;
+}
+
+#buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.button {
+  width: 6rem;
+  height: 6rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #cacaca;
+  user-select: none;
+}
+.button.operator {
+  background: #eaeaea;
+}
+.row:last-child .button:first-child {
+  border-bottom-left-radius: 0.5rem;
+}
+.row:last-child .button:last-child {
+  border-bottom-right-radius: 0.5rem;
+}
+.button[data-value="onOff"] {
+  color: white;
+  border-top: none;
+  transition: all 0.25s ease-in-out;
+}
+#screen.off + #buttons .row .button[data-value="onOff"] {
+  background: green;
+}
+#screen.on + #buttons .row .button[data-value="onOff"] {
+  background: red;
+}
+.button[data-value="="] {
+  background: rgb(98, 9, 162);
+  color: white;
+}
+.button[data-value="backspace"] {
+  background: goldenrod;
+  color: white;
+}
+
+.button:active {
+  background: #eaeaea;
+}
+.button.operator:active {
+  background: #dadada;
+}
+.button[data-value="="]:active {
+  background: rgb(78, 4, 130);
+}
+.button[data-value="backspace"]:active {
+  background: rgb(186, 139, 21);
+}
+
+@keyframes blink {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
