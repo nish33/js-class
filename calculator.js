@@ -1,11 +1,34 @@
 const state = {
   deviceStatus: false,
-  digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  operators: ["+", "-", "*", "/", "%"],
+  operators: {
+    "+": function (a, b) {
+      return a + b;
+    },
+    "-": function (a, b) {
+      return a - b;
+    },
+    "*": function (a, b) {
+      return a * b;
+    },
+    "/": function (a, b) {
+      return a / b;
+    },
+    "%": function (a,b) {
+      return a % b;
+    },
+  },
+  precedence: {
+    "+": 1,
+    "-": 1,
+    "*": 2,
+    "/": 2,
+    "%": 2,
+  },
   expression: "",
   result: "",
 };
 const buttons = document.getElementsByClassName("button");
+console.log(buttons);
 const screen = document.getElementById("screen");
 const input = document.getElementById("input");
 
@@ -18,6 +41,61 @@ function changeDeviceStatus() {
     : (screen.classList.add("off"),
       screen.classList.remove("on"),
       (input.innerText = "Click AC to turn on"));
+}
+
+function isOperator(operator) {
+  return state.operators.hasOwnProperty(operator);
+}
+function isHigherPrecedence(op1, op2) {
+  return state.precedence[op1] >= state.precedence[op2];
+}
+
+function getResult() {
+  // console.log(state.expression);
+  const tokens = state.expression.match(/(\d+|\+|\-|\*|\/|\%)/g);
+  
+  console.log(tokens);
+  const output = [];
+  const operatorStack = [];
+
+  for (let token of tokens) {
+    if (!isOperator(token)) {
+      output.push(parseFloat(token));
+    } else {
+      while (
+        operatorStack.length > 0 &&
+        isHigherPrecedence(operatorStack[operatorStack.length - 1], token)
+      ) {
+        output.push(operatorStack.pop());
+      }
+      operatorStack.push(token);
+    }
+  }
+
+  while(operatorStack.length > 0) {
+    output.push(operatorStack.pop());
+  }
+
+  const evaluate = (stack) => {
+    const valueStack = [];
+
+    for (let i = 0; i < stack.length; i++) {
+      const token = stack[i];
+
+      if (!isOperator(token)) {
+        valueStack.push(token);
+      } else {
+        const b = valueStack.pop();
+        const a = valueStack.pop();
+        const result = state.operators[token](a, b);
+        valueStack.push(result);
+      }
+    }
+
+    return valueStack.pop();
+  };
+  console.log(output);
+  return evaluate(output);
 }
 
 for (btn of buttons) {
@@ -43,8 +121,10 @@ for (btn of buttons) {
         input.innerText = state.expression;
         break;
       case "=":
-        getResult();
+        state.result = getResult();
         input.innerText = state.result;
+        state.expression = state.result;
+        break;
       default:
         state.expression += clickedBtn;
         input.innerText = state.expression;
